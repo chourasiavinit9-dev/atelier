@@ -10,6 +10,18 @@ function makeId(): string {
 }
 
 // ─── Plan Health Calculation ──────────────────────────────────────────────────
+/**
+ * Computes a 0–100 composite plan-health score for the given workspace.
+ *
+ * @description Scores are derived from four equally-weighted sub-scores
+ * (0–25 each): budget variance, task completion rate, vendor verification
+ * rate, and run-sheet confirmation rate. The final score is clamped to
+ * [10, 100].
+ *
+ * @param ws - The full workspace snapshot to evaluate.
+ * @returns A {@link PlanHealth} object containing the total `score` and the
+ *   individual `parts` breakdown.
+ */
 export function computePlanHealth(ws: Workspace): PlanHealth {
   const { plan, runSheet } = ws;
 
@@ -43,6 +55,17 @@ export function computePlanHealth(ws: Workspace): PlanHealth {
 }
 
 // ─── Suggested Next Actions ───────────────────────────────────────────────────
+/**
+ * Derives up to three prioritised suggested next actions for the planner.
+ *
+ * @description Checks four areas in order: unbooked vendors, high-priority
+ * incomplete tasks, an empty guest list, and a missing run-sheet. At most
+ * three actions are returned so the UI stays focused.
+ *
+ * @param ws - The current workspace snapshot.
+ * @returns An array of up to three {@link NextAction} objects, each with a
+ *   human-readable label, reason, and navigation target.
+ */
 export function getSuggestedNextActions(ws: Workspace): NextAction[] {
   const actions: NextAction[] = [];
   const unbookedVendor = ws.plan.vendors.find((v) => v.status !== 'Verified & Booked');
@@ -84,6 +107,17 @@ export function getSuggestedNextActions(ws: Workspace): NextAction[] {
 }
 
 // ─── Default Generators ───────────────────────────────────────────────────────
+/**
+ * Generates a default guest list from the built-in sample names.
+ *
+ * @description Creates a guest list seeded with {@link SAMPLE_GUEST_NAMES},
+ * assigning varied RSVP statuses so the UI shows a realistic spread on first
+ * load. No parameters are required — this is always deterministic except for
+ * the randomly generated IDs.
+ *
+ * @returns A {@link GuestsState} containing the pre-populated list and
+ *   `useConfirmedHeadcount` set to `false`.
+ */
 export function generateInitialGuests(): GuestsState {
   const list: Guest[] = SAMPLE_GUEST_NAMES.map((name, i) => ({
     id: makeId(),
@@ -94,6 +128,19 @@ export function generateInitialGuests(): GuestsState {
   return { list, useConfirmedHeadcount: false };
 }
 
+/**
+ * Builds an event-type-appropriate initial ceremony schedule.
+ *
+ * @description Produces a two-day schedule for weddings, a single-evening
+ * schedule for birthday parties, and a single-day summit schedule for all
+ * other event types. Each day is populated with realistic placeholder items
+ * drawn from the {@link CEREMONY_FUNCTIONS} constants.
+ *
+ * @param input - The event form data collected during onboarding, used to
+ *   determine event type, date, and city.
+ * @returns A {@link CeremonySchedule} containing ceremony days, assumption
+ *   strings, and a list of applicable ceremony functions.
+ */
 export function generateInitialCeremonies(input: EventFormInput): CeremonySchedule {
   const isWedding = input.eventType === 'Wedding';
   const isBirthday = input.eventType === 'Birthday';
@@ -154,6 +201,18 @@ export function generateInitialCeremonies(input: EventFormInput): CeremonySchedu
   };
 }
 
+/**
+ * Creates a day-of-execution run-sheet seeded with realistic timeline rows.
+ *
+ * @description Wedding events receive a ten-row run-sheet covering hair &
+ * make-up through dinner service. All other event types receive an
+ * eight-row run-sheet spanning venue access through the dance floor.
+ *
+ * @param input - The event form data; only `eventType` is used to branch
+ *   the template selection.
+ * @returns A {@link RunSheet} with pre-populated rows, planning assumptions,
+ *   and an ISO-8601 `generatedAt` timestamp.
+ */
 export function generateInitialRunSheet(input: EventFormInput): RunSheet {
   const isWedding = input.eventType === 'Wedding';
 
@@ -188,6 +247,20 @@ export function generateInitialRunSheet(input: EventFormInput): RunSheet {
   };
 }
 
+/**
+ * Generates a shareable guest-facing schedule card from ceremony data.
+ *
+ * @description When a ceremony schedule is provided, each ceremony item is
+ * mapped to a guest-schedule item with dress-code and arrival note. If no
+ * ceremony schedule exists, three generic placeholder items are produced
+ * instead, using the city from the form input as the venue.
+ *
+ * @param input - The event form data, supplying event type, date, and city.
+ * @param ceremonies - Optional ceremony schedule to derive items from;
+ *   if `null` or `undefined`, a generic three-item fallback is used.
+ * @returns A {@link GuestScheduleCard} with a title, intro text, and
+ *   ordered list of schedule items ready for PDF or card export.
+ */
 export function generateInitialGuestSchedule(input: EventFormInput, ceremonies?: CeremonySchedule | null): GuestScheduleCard {
   const items: GuestScheduleItem[] = ceremonies?.days?.flatMap((day) =>
     day.items.map((it) => ({
@@ -236,6 +309,18 @@ export function generateInitialGuestSchedule(input: EventFormInput, ceremonies?:
   };
 }
 
+/**
+ * Seeds an initial payments ledger from the top budget categories.
+ *
+ * @description Takes the first three budget categories and creates a 25 %
+ * booking-deposit payment for each, dated today. Categories whose allocated
+ * amount rounds down to zero are silently skipped.
+ *
+ * @param budget - The full array of budget category allocations from the
+ *   generated plan.
+ * @returns An array of {@link Payment} objects (zero to three entries)
+ *   representing initial vendor deposits.
+ */
 export function generateInitialPayments(budget: BudgetCategoryAllocation[]): Payment[] {
   const payments: Payment[] = [];
   const today = new Date().toISOString().split('T')[0]!;
@@ -259,6 +344,22 @@ export function generateInitialPayments(budget: BudgetCategoryAllocation[]): Pay
 }
 
 // ─── ICS Calendar File Export ─────────────────────────────────────────────────
+/**
+ * Serialises timeline tasks into a standards-compliant iCalendar (.ics) string.
+ *
+ * @description Each task becomes a `VEVENT` with an all-day `DTSTART` /
+ * `DTEND` entry. Special characters (commas, semicolons, backslashes) in
+ * text fields are sanitised, and values are truncated to 80 characters to
+ * comply with the iCalendar line-length recommendation.
+ *
+ * @param tasks - The timeline tasks to include as calendar events.
+ * @param _eventDate - Reserved for future use (e.g., setting the calendar's
+ *   primary event date); currently unused.
+ * @param eventTitle - The human-readable calendar name used in the
+ *   `X-WR-CALNAME` property.
+ * @returns A CRLF-delimited iCalendar string suitable for saving as a
+ *   `.ics` file or attaching to an email invite.
+ */
 export function buildIcsCalendar(tasks: TimelineTask[], _eventDate: string, eventTitle: string): string {
   const clean = (s: string) => s.replace(/[,;\\]/g, ' ').slice(0, 80);
   const formatDate = (iso: string) => iso.replace(/-/g, '');
@@ -292,6 +393,18 @@ export function buildIcsCalendar(tasks: TimelineTask[], _eventDate: string, even
 }
 
 // ─── Clash Detection ──────────────────────────────────────────────────────────
+/**
+ * Detects overlapping ceremony items within each ceremony day.
+ *
+ * @description Compares every pair of items on the same day using a standard
+ * interval-overlap check (`aStart < bEnd && bStart < aEnd`). Overlaps across
+ * different days are intentionally ignored.
+ *
+ * @param days - An array of ceremony days, each containing a list of
+ *   time-bound ceremony items with `start` and `end` in `"HH:MM"` format.
+ * @returns An array of {@link ClashWarning} objects; empty when no overlaps
+ *   are detected.
+ */
 export function detectCeremonyClashes(days: CeremonyDay[]): ClashWarning[] {
   const warnings: ClashWarning[] = [];
 

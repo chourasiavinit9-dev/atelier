@@ -13,17 +13,36 @@ interface CacheNode<V> {
 /**
  * LRU cache with TTL expiry.
  * O(1) get/set using doubly-linked list + Map.
+ *
+ * @typeParam V - The type of values stored in the cache.
  */
 export class LruCache<V> {
   private readonly map = new Map<string, CacheNode<V>>();
   private head: CacheNode<V> | null = null; // most-recently-used
   private tail: CacheNode<V> | null = null; // least-recently-used
 
+  /**
+   * Creates a new `LruCache` instance.
+   *
+   * @param maxSize - Maximum number of entries before the least-recently-used
+   *   entry is evicted.
+   * @param ttlMs - Time-to-live in milliseconds; entries older than this are
+   *   treated as expired and removed on the next access.
+   */
   constructor(
     private readonly maxSize: number,
     private readonly ttlMs: number,
   ) {}
 
+  /**
+   * Retrieves a cached value by key.
+   *
+   * @description Promotes the accessed entry to the most-recently-used
+   * position. Returns `undefined` and evicts the entry when it has expired.
+   *
+   * @param key - The cache key to look up.
+   * @returns The cached value, or `undefined` if the key is absent or expired.
+   */
   get(key: string): V | undefined {
     const node = this.map.get(key);
     if (!node) return undefined;
@@ -35,6 +54,16 @@ export class LruCache<V> {
     return node.value;
   }
 
+  /**
+   * Inserts or updates a cache entry.
+   *
+   * @description If the key already exists, its value and TTL are refreshed
+   * and it is promoted to most-recently-used. If the cache is at capacity
+   * after inserting a new entry, the least-recently-used entry is evicted.
+   *
+   * @param key - The cache key.
+   * @param value - The value to store.
+   */
   set(key: string, value: V): void {
     const existing = this.map.get(key);
     if (existing) {
@@ -56,10 +85,17 @@ export class LruCache<V> {
     if (this.map.size > this.maxSize) this.evictTail();
   }
 
+  /**
+   * Returns `true` when the key exists and has not expired.
+   *
+   * @param key - The cache key to check.
+   * @returns `true` if a non-expired entry is present, `false` otherwise.
+   */
   has(key: string): boolean {
     return this.get(key) !== undefined;
   }
 
+  /** Returns the current number of entries in the cache (including expired ones not yet evicted). */
   get size(): number { return this.map.size; }
 
   private moveToHead(node: CacheNode<V>): void {
@@ -95,10 +131,26 @@ export class LruCache<V> {
 /**
  * Deduplicates concurrent in-flight requests for the same key.
  * Double-clicks / race conditions trigger only 1 network execution.
+ *
+ * @typeParam V - The resolved value type of the deduplicated promises.
  */
 export class RequestCoalescer<V> {
   private readonly inflight = new Map<string, Promise<V>>();
 
+  /**
+   * Executes `fn` for `key` if no in-flight request exists; otherwise returns
+   * the existing promise so all callers share a single execution.
+   *
+   * @description Once the promise settles (resolves or rejects), the entry is
+   * automatically removed from the in-flight map so the next call triggers a
+   * fresh execution.
+   *
+   * @param key - The deduplication key (e.g. a cache key or request hash).
+   * @param fn - The async factory function to invoke when no in-flight request
+   *   exists for this key.
+   * @returns A promise that resolves to the result of `fn`, shared across all
+   *   concurrent callers for the same key.
+   */
   async get(key: string, fn: () => Promise<V>): Promise<V> {
     const existing = this.inflight.get(key);
     if (existing) return existing;
@@ -107,6 +159,7 @@ export class RequestCoalescer<V> {
     return promise;
   }
 
+  /** Returns the number of currently in-flight (pending) requests. */
   get size(): number { return this.inflight.size; }
 }
 

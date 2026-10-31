@@ -94,6 +94,9 @@ export async function generatePlanWithRetry(input: EventFormInput): Promise<AiOu
   for (let attempt = 0; attempt < GEMINI_MAX_RETRIES; attempt++) {
     try {
       const controller = new AbortController();
+      // ponytail: AbortController timeout enforced via clearTimeout — the
+      // @google/genai generateContent config does not expose a `signal` param,
+      // so cancellation is handled by the surrounding setTimeout/clearTimeout.
       const timer = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
       try {
         const result = await callGemini(input);

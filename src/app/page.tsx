@@ -1,5 +1,6 @@
 'use client';
 import { useState, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import OnboardingWizard from '@/components/OnboardingWizard';
 import TodayScreen from '@/components/TodayScreen';
@@ -9,13 +10,15 @@ import VendorChecklist from '@/components/VendorChecklist';
 import ThemeStudio from '@/components/ThemeStudio';
 import GuestsScreen from '@/components/GuestsScreen';
 import CeremonyScreen from '@/components/CeremonyScreen';
-import RunSheetScreen from '@/components/RunSheetScreen';
 import GuestScheduleScreen from '@/components/GuestScheduleScreen';
 import AssistantScreen from '@/components/AssistantScreen';
 import BudgetLogScreen from '@/components/BudgetLogScreen';
-import FamilySummaryScreen from '@/components/FamilySummaryScreen';
-import CardStudio from '@/components/CardStudio';
-import VendorMapScreen from '@/components/VendorMapScreen';
+
+// Heavy / rarely-visited screens — lazy-loaded to reduce First Load JS bundle
+const VendorMapScreen = dynamic(() => import('@/components/VendorMapScreen'), { ssr: false });
+const CardStudio = dynamic(() => import('@/components/CardStudio'), { ssr: false });
+const FamilySummaryScreen = dynamic(() => import('@/components/FamilySummaryScreen'), { ssr: false });
+const RunSheetScreen = dynamic(() => import('@/components/RunSheetScreen'), { ssr: false });
 import { NAV_ITEMS, STORAGE_VERSION } from '@/lib/constants';
 import type {
   EventFormInput, GeneratedPlan, BudgetCategoryAllocation,
