@@ -1,0 +1,53 @@
+rules_version = '2';
+
+/**
+ * Atelier Event Orchestrator — Cloud Firestore Security & RLS Rules
+ *
+ * Architecture Principles:
+ * 1. Zero Trust Client Access: Atelier communicates with Firestore exclusively
+ *    via the Google Cloud Firebase Admin SDK located within secure Next.js server runtime.
+ * 2. Client SDK Isolation: Direct reads and writes from untrusted client-side SDKs
+ *    are blocked by default to eliminate credential leakage, token harvesting, and
+ *    client-side payload tampering.
+ * 3. Row-Level Security (RLS) Readiness: Per-collection rules are explicitly declared
+ *    below for future multi-tenant client sessions authenticated via Firebase Auth.
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for authenticated access & ownership validation
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ─── Plan Cache Collection ───────────────────────────────────────────────
+    // Multi-tier cached generation payloads (keyed by deterministic FNV-1a hash).
+    // Strictly accessed server-side via Firebase Admin SDK. Client access denied.
+    match /plan_cache/{cacheKey} {
+      allow read, write: if false;
+    }
+
+    // ─── Workspace Events Collection ─────────────────────────────────────────
+    // User-owned event plans, budgets, runsheets, and guest logistics.
+    // Client RLS allows users read/write permissions ONLY on documents they own.
+    match /events/{eventId} {
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+    }
+
+    // ─── User Profiles & Settings Collection ─────────────────────────────────
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // ─── Zero-Trust Catch-All Deny ───────────────────────────────────────────
+    // Any collections or sub-collections not explicitly defined above are blocked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

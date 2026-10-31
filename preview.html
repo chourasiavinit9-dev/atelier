@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AuraPlan — UI preview</title>
+  <style>
+    :root {
+      --bg: #f6efe4;
+      --paper: #fffaf3;
+      --ink: #3b2140;
+      --muted: #7a5f6a;
+      --line: #e7d6c8;
+      --plum: #5c2e4a;
+      --plum-2: #7a3d62;
+      --gold: #8a5a24;
+      --ok: #1f6b4a;
+      --warn: #8a4b12;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 28px;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+    }
+    .mark {
+      width: 36px; height: 36px;
+      background: var(--plum);
+      color: #fffaf3;
+      display: grid; place-items: center;
+      font-weight: 700;
+    }
+    .brand { font-family: Georgia, serif; font-size: 22px; color: var(--plum); }
+    .tag { color: var(--muted); font-size: 13px; }
+    main { max-width: 980px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 500; }
+    h1 { font-size: 34px; margin: 0 0 8px; }
+    .lede { color: var(--muted); margin: 0 0 28px; }
+    label { display: block; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; }
+    input, select, textarea, button { font: inherit; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+    textarea { border-radius: 16px; min-height: 88px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .tiles { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tile {
+      min-height: 44px; padding: 0 18px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer;
+    }
+    .tile.on { background: var(--plum); color: #fffaf3; border-color: var(--plum); }
+    .primary {
+      width: 100%; min-height: 48px; margin-top: 22px;
+      background: var(--plum); color: #fffaf3; border: 0; border-radius: 999px; cursor: pointer; font-size: 16px;
+    }
+    .banner {
+      background: #f8ead4; color: var(--warn);
+      padding: 12px 16px; border-radius: 12px; margin-bottom: 20px;
+    }
+    .summary { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .ghost {
+      min-height: 44px; padding: 0 14px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--paper); cursor: pointer;
+    }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 18px; }
+    .kpis, .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .card { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+    .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 8px 0; }
+    .bar > span { display: block; height: 100%; background: var(--plum); }
+    .ok { color: var(--ok); }
+    .task { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+    .swatch { width: 22px; height: 22px; border-radius: 99px; display: inline-block; border: 1px solid var(--line); }
+    .hidden { display: none; }
+    @media (max-width: 640px) { .row { grid-template-columns: 1fr; } h1 { font-size: 26px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="mark" aria-hidden="true">A</div>
+    <div>
+      <div class="brand">AuraPlan</div>
+      <div class="tag">Planning assistant</div>
+    </div>
+  </header>
+  <main>
+    <section id="wizard">
+      <h1>Plan the celebration with one brief.</h1>
+      <p class="lede">Tell us a few details so we can build your custom event plan.</p>
+      <div>
+        <label>Event type</label>
+        <div class="tiles" id="types">
+          <button type="button" class="tile on">Wedding</button>
+          <button type="button" class="tile">Birthday</button>
+          <button type="button" class="tile">Community Event</button>
+        </div>
+      </div>
+      <label for="guests">Guest count</label>
+      <input id="guests" type="number" value="180" min="1" max="5000" />
+      <div class="row">
+        <div>
+          <label for="budget">Total budget</label>
+          <input id="budget" type="text" value="INR 850000" />
+        </div>
+        <div>
+          <label for="city">City</label>
+          <input id="city" type="text" value="Jaipur" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="tier">City tier</label>
+          <select id="tier"><option>Metro</option><option selected>Tier-2</option><option>Tier-3</option></select>
+        </div>
+        <div>
+          <label for="date">Event date</label>
+          <input id="date" type="date" value="2027-02-14" />
+        </div>
+      </div>
+      <label for="vibe">Vibe (optional)</label>
+      <textarea id="vibe">royal courtyard wedding with heritage charm</textarea>
+      <button type="button" class="primary" id="go">Generate my plan →</button>
+    </section>
+
+    <section id="plan" class="hidden">
+      <div class="banner">AI-generated estimates (not confirmed vendor quotes)</div>
+      <div class="summary">
+        <div>
+          <h1 id="title">Wedding in Jaipur</h1>
+          <p class="lede" id="meta">180 guests · Tier-2 · 14 Feb 2027 · INR 8,50,000</p>
+        </div>
+        <div>
+          <button type="button" class="ghost" id="back">Back to brief</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button type="button" class="tile on" data-tab="budget">Budget planner</button>
+        <button type="button" class="tile" data-tab="timeline">Timeline</button>
+        <button type="button" class="tile" data-tab="vendors">Vendors</button>
+        <button type="button" class="tile" data-tab="themes">Theme studio</button>
+      </div>
+
+      <div id="budget">
+        <div class="kpis">
+          <div class="card"><div class="tag">Allocated</div><h2>INR 8,50,000</h2></div>
+          <div class="card"><div class="tag">Actual so far</div><h2>INR 1,20,000</h2></div>
+          <div class="card"><div class="tag">Variance</div><h2 class="ok">Under by 7,30,000</h2></div>
+        </div>
+        <div class="cards" style="margin-top:16px">
+          <div class="card"><h3>Venue and booking</h3><p>INR 2,55,000</p><div class="bar" role="progressbar" aria-valuenow="31"><span style="width:31%"></span></div><p class="ok">Under budget · spent 80,000</p></div>
+          <div class="card"><h3>Catering</h3><p>INR 2,12,500</p><div class="bar"><span style="width:9%"></span></div><p class="ok">Under budget · spent 20,000</p></div>
+          <div class="card"><h3>Decorations and flowers</h3><p>INR 1,27,500</p><div class="bar"><span style="width:8%"></span></div><p class="ok">Under budget · spent 10,000</p></div>
+          <div class="card"><h3>Photography</h3><p>INR 1,02,000</p><div class="bar"><span style="width:10%"></span></div><p class="ok">Under budget · spent 10,000</p></div>
+          <div class="card"><h3>Entertainment</h3><p>INR 68,000</p><div class="bar"><span style="width:0%"></span></div><p>On budget · spent 0</p></div>
+          <div class="card"><h3>Invitations</h3><p>INR 42,500</p><div class="bar"><span style="width:0%"></span></div><p>On budget · spent 0</p></div>
+          <div class="card"><h3>Transport and misc.</h3><p>INR 42,500</p><div class="bar"><span style="width:0%"></span></div><p>On budget · spent 0</p></div>
+        </div>
+      </div>
+
+      <div id="timeline" class="hidden">
+        <p>6 of 12 tasks complete · 50%</p>
+        <div class="bar"><span style="width:50%"></span></div>
+        <div class="card task"><input type="checkbox" checked /><div><strong>Lock palace courtyard hold</strong><div class="tag">14 Aug 2026 · High · Completed</div></div></div>
+        <div class="card task"><input type="checkbox" /><div><strong>Shortlist catering for 180</strong><div class="tag">14 Nov 2026 · High · In progress</div></div></div>
+        <div class="card task"><input type="checkbox" /><div><strong>Book photography team</strong><div class="tag">14 Nov 2026 · Medium · Pending</div></div></div>
+        <div class="card task"><input type="checkbox" /><div><strong>Final guest count to caterer</strong><div class="tag">7 Feb 2027 · High · Pending</div></div></div>
+      </div>
+
+      <div id="vendors" class="hidden">
+        <div class="cards">
+          <div class="card"><h3>Venue</h3><p>Book 6 months before</p><p>INR 2,20,000 – 2,80,000</p><p>Status: Shortlisted</p><p class="tag">Not booked unless you mark Verified & Booked</p></div>
+          <div class="card"><h3>Catering</h3><p>Book 3 months before</p><p>INR 1,80,000 – 2,40,000</p><p>Status: Researching</p></div>
+          <div class="card"><h3>Decor</h3><p>Book 2 months before</p><p>INR 90,000 – 1,40,000</p><p>Status: Contacted</p></div>
+          <div class="card"><h3>Photography</h3><p>Book 4 months before</p><p>INR 80,000 – 1,20,000</p><p>Status: Researching</p></div>
+        </div>
+      </div>
+
+      <div id="themes" class="hidden">
+        <div class="cards">
+          <div class="card"><h3>Ivory marigold court</h3><p>Sandstone, marigold garlands, brass diyas.</p><p><span class="swatch" style="background:#F4E7C8"></span> <span class="swatch" style="background:#C45C26"></span> <span class="swatch" style="background:#5C2E4A"></span></p><button type="button" class="ghost">Pin to tasks</button> <button type="button" class="ghost">Pin to budget</button></div>
+          <div class="card"><h3>Moonlit stepwell</h3><p>Indigo drapes, silver trays, quiet strings.</p><p><span class="swatch" style="background:#1E2A44"></span> <span class="swatch" style="background:#C9D2E0"></span> <span class="swatch" style="background:#C4A35A"></span></p><button type="button" class="ghost">Pin to tasks</button> <button type="button" class="ghost">Pin to budget</button></div>
+          <div class="card"><h3>Desert orchard</h3><p>Olive linen, citrus, open-air seating.</p><p><span class="swatch" style="background:#6B7F4A"></span> <span class="swatch" style="background:#F3E6D0"></span> <span class="swatch" style="background:#8A5A24"></span></p><button type="button" class="ghost">Pin to tasks</button> <button type="button" class="ghost">Pin to budget</button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const wizard = document.getElementById("wizard");
+    const plan = document.getElementById("plan");
+    document.getElementById("go").onclick = () => {
+      wizard.classList.add("hidden");
+      plan.classList.remove("hidden");
+    };
+    document.getElementById("back").onclick = () => {
+      plan.classList.add("hidden");
+      wizard.classList.remove("hidden");
+    };
+    document.querySelectorAll("#types .tile").forEach((btn) => {
+      btn.onclick = () => {
+        document.querySelectorAll("#types .tile").forEach((b) => b.classList.remove("on"));
+        btn.classList.add("on");
+      };
+    });
+    const panels = ["budget", "timeline", "vendors", "themes"];
+    document.querySelectorAll(".tabs .tile").forEach((btn) => {
+      btn.onclick = () => {
+        document.querySelectorAll(".tabs .tile").forEach((b) => b.classList.remove("on"));
+        btn.classList.add("on");
+        panels.forEach((id) => document.getElementById(id).classList.toggle("hidden", id !== btn.dataset.tab));
+      };
+    });
+  </script>
+</body>
+</html>
