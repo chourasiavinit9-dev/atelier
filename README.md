@@ -36,22 +36,26 @@
 
 ## 📸 Visual Showcase & System Tour
 
-### Core Interfaces & Live Screenshots
-| 00. Home Screen & Onboarding Configurator | 02. Today Dashboard & Health Engine |
+### Core Interfaces & Distinct Module Screenshots
+| 00. Home Screen & Onboarding Configurator | 01. Today Dashboard & Health Engine |
 |:---:|:---:|
-| ![Home Onboarding](docs/images/screenshots/00-home-onboarding-v2.png) | ![Today Dashboard](docs/images/screenshots/08-today-dashboard-v2.png) |
+| ![Home Onboarding](docs/images/screenshots/00-home-onboarding.png) | ![Today Dashboard](docs/images/screenshots/01-today-dashboard.png) |
 
-| 03. Dynamic Budget Allocator | 04. Timeline Milestones & Deadlines |
+| 02. Dynamic Budget Allocator & City Multipliers | 03. Timeline Milestones & Phase Deadlines |
 |:---:|:---:|
-| ![Budget Planner](docs/images/screenshots/09-budget-planner-v2.png) | ![Timeline Milestones](docs/images/screenshots/04-timeline-milestones.png) |
+| ![Budget Planner](docs/images/screenshots/02-budget-planner.png) | ![Timeline Milestones](docs/images/screenshots/03-timeline-milestones.png) |
 
-| 05. OpenStreetMap Vendor & Telemetry Finder | 06. Bespoke Card Studio & Keepsake Printer |
+| 04. OpenStreetMap Vendor & Telemetry Finder | 05. Bespoke Card Studio & Keepsake Printer |
 |:---:|:---:|
-| ![OpenStreetMap Vendor Finder](docs/images/screenshots/10-vendor-map-v2.png) | ![Card Studio](docs/images/screenshots/11-card-studio-v2.png) |
+| ![OpenStreetMap Vendor Finder](docs/images/screenshots/04-vendor-map-osm.png) | ![Card Studio](docs/images/screenshots/05-card-studio.png) |
 
-| 07. Guest & RSVP Headcount Hub | 08. Family Summary & Executive Briefing |
+| 06. Guest List & RSVP Headcount Hub | 07. Multi-Day Ceremony Schedule Sequencer |
 |:---:|:---:|
-| ![Guest & RSVP Hub](docs/images/screenshots/12-guests-rsvp-v2.png) | ![Family Summary](docs/images/screenshots/07-family-summary.png) |
+| ![Guest List & RSVPs](docs/images/screenshots/06-guests-rsvp.png) | ![Ceremony Schedule](docs/images/screenshots/07-ceremonies-schedule.png) |
+
+| 08. Day-of Director Run Sheet with Roles | 09. Family Summary & Stakeholder View |
+|:---:|:---:|
+| ![Run Sheet](docs/images/screenshots/08-run-sheet.png) | ![Family Summary](docs/images/screenshots/09-family-summary.png) |
 
 ---
 
