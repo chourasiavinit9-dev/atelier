@@ -11,6 +11,7 @@ const CSP = [
 ].join('; ');
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   poweredByHeader: false,
   async headers() {
     return [

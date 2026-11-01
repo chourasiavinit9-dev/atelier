@@ -3,11 +3,11 @@ WORKDIR /app
 
 FROM base AS deps
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --legacy-peer-deps --omit=dev
 
 FROM base AS builder
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 COPY . .
 RUN npm run build
 
