@@ -39,7 +39,7 @@ export default function OnboardingWizard({ onSubmit, isLoading }: Props) {
   const [form, setForm] = useState<Partial<EventFormInput>>({
     eventType: 'Wedding', guestCount: 100, cityTier: 'Metro',
     currency: 'INR', totalBudget: 500000,
-    eventDate: getTomorrowIso(), city: 'Mumbai', vibeAndPreferences: '',
+    eventDate: getTomorrowIso(), city: '', vibeAndPreferences: '',
   });
   const [errors, setErrors] = useState<FieldErrors>({});
 
