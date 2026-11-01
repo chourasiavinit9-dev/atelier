@@ -3,10 +3,10 @@ import type { NextConfig } from 'next';
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires these in dev
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com",
+  "img-src 'self' data: https://*.tile.openstreetmap.org https://unpkg.com",
   "font-src 'self'",
-  "connect-src 'self' https://generativelanguage.googleapis.com https://*.firebaseio.com",
+  "connect-src 'self' https://generativelanguage.googleapis.com https://*.firebaseio.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org",
   "frame-ancestors 'none'",
 ].join('; ');
 
