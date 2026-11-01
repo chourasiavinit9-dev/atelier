@@ -1,0 +1,26 @@
+runConfig:
+  # Minimum instances to keep warm (0 = scale to zero)
+  minInstances: 0
+  # Maximum concurrent instances
+  maxInstances: 10
+  # Memory per instance
+  memoryMiB: 512
+  # CPU per instance
+  cpu: 1
+  # Request timeout
+  concurrency: 80
+
+env:
+  # GEMINI_API_KEY is stored as a secret (not plaintext)
+  # Set it via: firebase apphosting:secrets:set GEMINI_API_KEY
+  - variable: GEMINI_API_KEY
+    secret: GEMINI_API_KEY
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # Optional Firestore project ID
+  - variable: FIRESTORE_PROJECT_ID
+    value: atelier-genai-2026
+    availability:
+      - RUNTIME
