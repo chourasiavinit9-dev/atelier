@@ -17,20 +17,7 @@
 | | |
 |:---|:---|
 | **GitHub Repository** | https://github.com/chourasiavinit9-dev/atelier |
-| **Live Demo** | 🔴 http://localhost:3000 (local) \| [Deploy to Vercel →](https://vercel.com/new) |
-
----
-
-## 🏆 Score Projection (Post-Improvement)
-
-| Category | Score | Key Evidence |
-|:---|:---:|:---|
-| **Code Quality** | **99/100** | Strict TypeScript, zero `any`, `--max-warnings 0` ESLint, modular architecture |
-| **Security** | **99/100** | Multi-vector prompt-injection, XSS, magic-byte binary inspector, zero-trust Firestore RLS |
-| **Problem Alignment** | **99/100** | Exact target: Weddings/Birthdays/Community, OSM GIS, run sheets, print-ready keepsakes |
-| **Efficiency** | **98/100** | 3-tier LRU→Firestore→Gemini caching, stampede coalescing, FNV-1a hashing |
-| **Testing** | **100/100** | 152 passing tests across 10 suites: Security, LRU, Rate Limiter, Route Factory, Budget, Timeline, etc. |
-| **Accessibility** | **96/100** | WCAG 2.2 AA: skip links, WAI-ARIA tab nav, 4.5:1 contrast, 44px touch targets |
+| **Live Demo** | https://atelier-genai.onrender.com |
 
 ---
 
@@ -309,24 +296,6 @@ Located in [`firestore.rules`](file:///Users/vinitchaurasia/Event%20planner/aura
 
 ---
 
-## 🏆 Hack2skill Evaluation Matrix
-
-| Category | Impact Tier | Target Score | Implemented Capabilities & Evidence |
-|:---|:---:|:---:|:---|
-| **Code Quality** | 🔴 High | **99/100** | Strict TypeScript (`noImplicitAny`, `noUnusedLocals`, `noUnusedParameters`), zero `any`, modular architecture, typed domain errors, zero ESLint warnings (`--max-warnings 0`). |
-| **Security** | 🔴 High | **99/100** | Multi-vector prompt-injection scanner, XSS disarmer, binary magic-byte inspector, dual token-bucket rate limiter, zero-trust Cloud Firestore RLS rules. |
-| **Problem Alignment** | 🔴 High | **99/100** | Vertical: Wedding & Social Events (₹3,500 Cr India market). Covers budgeting, timelines, OSM GIS vendor telemetry, run sheets, and print-ready keepsakes. |
-| **Efficiency** | 🟡 Medium | **98/100** | 3-tier caching (L1 In-Memory LRU → L2 Firestore → L3 Gemini), request coalescing, deterministic FNV-1a hashing, pure function memoization. |
-| **Testing** | 🔴 High | **100/100** | **152 passing unit and integration tests across 10 test suites** (Security Attacks, Route Factory, LRU Cache, Rate Limiter, Budget, Timeline, Fallback, Efficiency Cache, Validators, Accessibility Contrast). |
-| **Accessibility** | 🟡 Medium | **96/100** | WCAG 2.2 AA compliant: Skip-to-content links, WAI-ARIA tab navigation with arrow keys, 4.5:1 text contrast ratios, 44px touch targets. |
-
-### Impact Tier Legend
-- 🔴 **High** — Core differentiator; judges weight this category most heavily
-- 🟡 **Medium** — Strong supporting evidence; meaningful score delta at the margins
-- 🟢 **Low** — Table-stakes compliance; presence expected, absence penalized
-
----
-
 ## 🌐 Google Cloud Services Used
 
 | Service | Architecture Role |
@@ -409,4 +378,4 @@ gcloud run deploy atelier \
 
 ## 📄 License
 
-MIT License. Crafted for the Hack2skill AI Innovation Challenge.
+MIT License. Built with Next.js, Google Gemini, and Tailwind CSS.
