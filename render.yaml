@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: atelier-genai
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false   # Set this manually in the Render dashboard → Environment tab
+      - key: PORT
+        value: 3000
+    autoDeploy: true
