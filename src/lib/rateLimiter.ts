@@ -28,6 +28,15 @@ export interface RateLimitResult {
   retryAfterMs?: number;
 }
 
+/**
+ * Checks per-IP rate limits using a dual sliding-window strategy:
+ * 1. **Burst limiter** — rejects if more than {@link RATE_LIMIT_BURST_COUNT} requests
+ *    arrive within {@link RATE_LIMIT_BURST_WINDOW_MS} milliseconds.
+ * 2. **Sustained limiter** — rejects if more than {@link RATE_LIMIT_SLIDING_COUNT} requests
+ *    arrive within {@link RATE_LIMIT_SLIDING_WINDOW_MS} milliseconds.
+ * @param ip - Client IP address string used as the rate-limit key
+ * @returns `{ allowed: true }` when within limits, or `{ allowed: false, retryAfterMs }` when blocked
+ */
 export function checkRateLimit(ip: string): RateLimitResult {
   const now = Date.now();
   const record = getRecord(ip);

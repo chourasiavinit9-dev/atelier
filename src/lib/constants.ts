@@ -3,7 +3,7 @@
 import type { BudgetCategory, EventType, CityTier, NavScreen } from './types';
 
 // ─── Model & API ─────────────────────────────────────────────────────────────
-export const GEMINI_MODEL = 'gemini-2.5-flash' as const;
+export const GEMINI_MODEL = 'gemini-3.5-flash' as const;
 export const GEMINI_TIMEOUT_MS = 30_000 as const;
 export const GEMINI_MAX_RETRIES = 3 as const;
 export const GEMINI_RETRY_BASE_MS = 1_000 as const;

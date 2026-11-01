@@ -3,7 +3,13 @@ import { BUDGET_CATEGORIES, BUDGET_PERCENTAGES } from './constants';
 import type { BudgetCategory, BudgetCategoryAllocation, BudgetLineItem, EventType } from './types';
 import type { AiOutput } from './validators';
 
-// Distribute total using largest-remainder method so sum === total exactly
+/**
+ * Distributes a total budget across categories using the Largest Remainder Method,
+ * guaranteeing the sum of all returned integers equals `total` exactly.
+ * @param total - Total budget in minor currency units (e.g. INR paise or whole rupees)
+ * @param eventType - Event type key used to look up category percentage weights
+ * @returns Array of integer allocations, one per budget category, in BUDGET_CATEGORIES order
+ */
 export function allocateBudget(total: number, eventType: EventType): number[] {
   const percentages = BUDGET_PERCENTAGES[eventType];
   const rawAmounts = percentages.map((p) => (p / 100) * total);
@@ -40,7 +46,14 @@ function makeId(): string {
   return Math.random().toString(36).slice(2, 11);
 }
 
-// Build full BudgetCategoryAllocation from AI output + deterministic totals
+/**
+ * Assembles full BudgetCategoryAllocation objects by merging AI line items with
+ * deterministic totals produced by {@link allocateBudget}.
+ * @param aiOutput - Validated AI-generated output containing raw budget categories
+ * @param total - Total event budget to distribute
+ * @param eventType - Event type for percentage weight lookup
+ * @returns Array of category allocations with reconciled line items
+ */
 export function buildBudgetAllocations(
   aiOutput: AiOutput,
   total: number,
@@ -65,7 +78,11 @@ export function buildBudgetAllocations(
   });
 }
 
-// Compute per-category variance
+/**
+ * Computes variance between allocated and actual spend for a category.
+ * @param category - Budget category allocation with actual costs recorded on line items
+ * @returns Label ('Under Budget' | 'On Budget' | 'Over Budget') and absolute difference amount
+ */
 export function computeVariance(category: BudgetCategoryAllocation): {
   label: 'Under Budget' | 'On Budget' | 'Over Budget';
   amount: number;

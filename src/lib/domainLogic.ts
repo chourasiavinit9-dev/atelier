@@ -25,6 +25,13 @@ function makeId(): string {
 export function computePlanHealth(ws: Workspace): PlanHealth {
   const { plan, runSheet } = ws;
 
+  if (!plan) {
+    return {
+      score: 15,
+      parts: { budgetBalance: 0, tasksOnTime: 0, vendorsVerified: 0, runSheetConfirmed: 15 },
+    };
+  }
+
   // 1. Budget variance score (0–25)
   const totalAlloc = plan.budget.reduce((s, b) => s + b.allocatedAmount, 0);
   const totalActual = plan.budget.reduce((s, b) => s + b.items.reduce((si, i) => si + (i.actualCost ?? 0), 0), 0);
@@ -67,6 +74,16 @@ export function computePlanHealth(ws: Workspace): PlanHealth {
  *   human-readable label, reason, and navigation target.
  */
 export function getSuggestedNextActions(ws: Workspace): NextAction[] {
+  if (!ws.plan) {
+    return [
+      {
+        label: 'Create Event Plan',
+        reason: 'Generate an AI roadmap with budgets, vendors, and milestones.',
+        navigateTo: 'wizard',
+      },
+    ];
+  }
+
   const actions: NextAction[] = [];
   const unbookedVendor = ws.plan.vendors.find((v) => v.status !== 'Verified & Booked');
   if (unbookedVendor) {

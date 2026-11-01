@@ -595,6 +595,7 @@ export default function HomePage() {
             <VendorMapScreen
               vendors={plan.vendors}
               city={formInput.city}
+              isActive={activeScreen === 'vendormap'}
             />
           </div>
         </div>

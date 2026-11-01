@@ -38,6 +38,7 @@ interface MapPin {
 interface Props {
   vendors: VendorCard[];
   city: string;
+  isActive?: boolean;
 }
 
 // ─── Nominatim Geocoding (OpenStreetMap, free, no key) ───────────────────────
@@ -124,6 +125,10 @@ async function initLeaflet(
     [center.lat, center.lng], MAP_DEFAULT_ZOOM,
   );
 
+  map.whenReady(() => {
+    map.invalidateSize();
+  });
+
   L.tileLayer(OSM_TILE_URL, {
     attribution: OSM_ATTRIBUTION,
     maxZoom: MAP_MAX_ZOOM,
@@ -190,10 +195,10 @@ async function initLeaflet(
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function VendorMapScreen({ vendors, city }: Props) {
+export default function VendorMapScreen({ vendors, city, isActive }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<any>(null); // Leaflet map instance — typed as any since Leaflet types are runtime-only
 
   const [cityCenter, setCityCenter] = useState<LatLng | null>(null);
   const [userPos, setUserPos] = useState<LatLng | null>(null);
@@ -204,6 +209,41 @@ export default function VendorMapScreen({ vendors, city }: Props) {
   const [loadingSearch, setLoadingSearch] = useState(false);
   const [status, setStatus] = useState('Locating city…');
   const [mapReady, setMapReady] = useState(false);
+
+  // ResizeObserver + visibility listener to guarantee Leaflet recalculates container dimensions
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0 && mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize({ animate: false });
+        }
+      }
+    });
+    observer.observe(mapRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // When tab becomes active or city center is set, force Leaflet to recalculate container bounds
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    const invalidate = () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize({ animate: false });
+        if (cityCenter) {
+          mapInstanceRef.current.setView([cityCenter.lat, cityCenter.lng]);
+        }
+      }
+    };
+
+    invalidate();
+    const t1 = setTimeout(invalidate, 80);
+    const t2 = setTimeout(invalidate, 250);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [isActive, cityCenter]);
 
   // Geocode city on mount
   useEffect(() => {

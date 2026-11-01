@@ -39,3 +39,4 @@ echo ""
 echo "✅ Deployment complete!"
 echo "   Firebase Console: https://console.firebase.google.com/project/$PROJECT/apphosting"
 echo "   Live URL will appear in the console after first build completes."
+

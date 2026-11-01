@@ -27,25 +27,43 @@ function toIso(d: Date): string {
   return d.toISOString().split('T')[0]!;
 }
 
-// Sort tasks chronologically by dueDate
+/**
+ * Sorts timeline tasks chronologically by their ISO due date string.
+ * @param tasks - Array of timeline tasks in any order
+ * @returns New sorted array — original array is not mutated
+ */
 export function sortTasksChronologically(tasks: TimelineTask[]): TimelineTask[] {
   return [...tasks].sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 }
 
-// Detect overdue tasks (dueDate in past and not Completed)
+/**
+ * Returns true if a task is past its due date and not yet completed.
+ * @param task - Timeline task to evaluate
+ * @returns `true` when dueDate < today and status !== 'Completed'
+ */
 export function isOverdue(task: TimelineTask): boolean {
   if (task.status === 'Completed') return false;
   return new Date(task.dueDate) < new Date(new Date().toISOString().split('T')[0]!);
 }
 
-// Compute completion percentage
+/**
+ * Computes the percentage of tasks with status 'Completed'.
+ * @param tasks - Array of timeline tasks
+ * @returns Integer percentage (0–100); returns 0 for an empty array
+ */
 export function computeCompletionPercentage(tasks: TimelineTask[]): number {
   if (tasks.length === 0) return 0;
   const done = tasks.filter((t) => t.status === 'Completed').length;
   return Math.round((done / tasks.length) * 100);
 }
 
-// Build tasks from AI output with backward-planned dates
+/**
+ * Converts AI-generated timeline milestones into fully hydrated TimelineTask objects
+ * with backward-planned due dates anchored to the event date.
+ * @param aiOutput - Validated AI output containing raw timeline milestone titles
+ * @param eventDate - ISO 8601 event date string (e.g. "2027-03-15")
+ * @returns Chronologically sorted array of TimelineTask objects
+ */
 export function buildTimeline(aiOutput: AiOutput, eventDate: string): TimelineTask[] {
   const base = new Date(eventDate);
   const milestones = [6, 3, 1]; // months before

@@ -24,3 +24,4 @@ env:
     value: atelier-genai-2026
     availability:
       - RUNTIME
+
